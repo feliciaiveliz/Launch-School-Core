@@ -1,13 +1,11 @@
-// In an earlier exercise, we created a school object. It works, however, it can still be improved. The following are improvements for you to implement in the solution provided:
+// Create a school object. The school object uses the student object from the previous exercise. It has methods that use and update information about the student. Be sure to check out the previous exercise for the other arguments that might be needed by the school object. Implement the following methods for the school object:
 
-// Make the list students private. Right now, anyone can gain access to it and manipulate it.
-// Make the constraint for allowed values for years a private variable. As a private variable it avoids an unnecessary statement in the addStudent method and at the same time makes the code more declarative.
-// Make the getCourse function accessible in the addGrade method also. As it is, only the courseReport method has access.
-// If you need a refresher on creating private data and scope, you may find the following lessons helpful:
-
-// Creating a Private Scope with an IIFE
-// Creating Private Data with an IIFE
-
+// addStudent: Adds a student by creating a new student and adding the student to a collection of students. The method adds a constraint that the year can only be any of the following values: '1st', '2nd', '3rd', '4th', or '5th'. Returns a student object if year is valid otherwise it logs "Invalid Year".
+// enrollStudent: Enrolls a student in a course.
+// addGrade: Adds the grade of a student for a course.
+// getReportCard: Logs the grades of a student for all courses. If the course has no grade, it uses "In progress" as the grade.
+// courseReport: Logs the grades of all students for a given course name. Only student with grades are part of the course report.
+// To test your code, use the three student objects listed below. Using the three student objects, produce the following values from the getReportCard and courseReport methods respectively.
 
 function createStudent(name, year) {
   return {
@@ -122,66 +120,13 @@ school.enrollStudent('Vinton', { name: 'Networking', code: 102 });
 school.enrollStudent('Vinton', { name: 'Ruby', code: 102, grade: 94 });
 school.enrollStudent('Felicia', { name: 'Ruby', code: 102, grade: 100 });
 school.enrollStudent('Felicia', { name: 'Javascript', code: 225 });
-
-let school = (function() {
-  let students = [];
-  let allowedYears = ['1st', '2nd', '3rd', '4th', '5th'];
-
-  function getCourse(student, courseName) {
-    return student.listCourses().filter(({name}) => name === courseName)[0];
-  }
-
-  return {
-    addStudent(name, year) {
-      if ((allowedYears).includes(year)) {
-        let student = createStudent(name, year);
-        students.push(student);
-        return student;
-      } else {
-        console.log('Invalid year');
-      }
-    },
-  
-    enrollStudent(student, courseName, courseCode) {
-      student.addCourse({ name: courseName, code: courseCode });
-    },
-  
-    addGrade(student, courseName, grade) {
-      let course = getCourse(student, courseName);
-  
-      if (course) {
-        course.grade = grade;
-      }
-    },
-  
-    getReportCard(student) {
-      student.listCourses().forEach(({ grade, name}) => {
-        if (grade) {
-          console.log(`${name}: ${String(grade)}`);
-        } else {
-          console.log(`${name}: In progress`);
-        }
-      });
-    },
-  
-    courseReport(courseName) {
-      const courseStudents = students.map(student => {
-        const course = getCourse(student, courseName) || { grade: undefined };
-        return { name: student.name, grade: course.grade };
-      }).filter(({grade}) => grade);
-  
-      if (courseStudents.length > 0) {
-        console.log(`=${courseName} Grades=`);
-  
-        const average = courseStudents.reduce((total, {name, grade}) => {
-          console.log(`${name}: ${String(grade)}`);
-          return total + grade;
-        }, 0) / courseStudents.length;
-  
-        console.log('---');
-        console.log(`Course Average: ${String(average)}`);
-      }
-    },
-  }
-  
-})();
+// let felicia = school.students[0];
+// let vinton = school.students[1];
+// console.log(school.students);
+// console.log(vinton);
+school.addGrade('Felicia', 101, 98);
+school.addGrade('Vinton', 102, 100);
+// console.log(felicia);
+// console.log(vinton);
+// school.getReportCard(felicia);
+console.log(school.courseReport('Ruby'));

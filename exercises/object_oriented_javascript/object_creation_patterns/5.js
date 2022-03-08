@@ -31,104 +31,188 @@ Notes:
 // The created item objects should not have any methods/properties on them other than the required information above and those inherited from Object.prototype.
 // You may add methods to the item manager as you deem necessary.
 
-- item creator
-  - ensures all information of item is present and valid
-- items manager 
-  - creates items
-  - updates info of items
-  - deletes items
-  - query info about items
-- reports manager 
-  - generates reports of an item or items
-  - specific items are report objects 
+let ItemManager = (function() {
+  function createSKU(name, category) {
+    let sku = '';
+    let splitName = name.split(' ');
+    
+    if (splitName.length === 2 && splitName[0].length === 2) {
+      sku += splitName[0];
+      sku += splitName[1].slice(0, 3);
+    } else {
+      sku += name.slice(0, 3);
+      sku += category.slice(0, 2);
+    }
+    
+    return sku.toUpperCase();
+  }
+  
+  function validName(name) {
+    return (name.split('').filter(char => char !== ' ').length >= 5);
+  }
 
-ITEM
-----
+  function validCategory(category) {
+    return (!category.includes(' ') && category.length >= 5); 
+  }
 
-SKU:
-- unique id of product
-- first 3 letters of item and 2 letters of category
-- if item name is 2 words and 1st word is 2 letters, take next word first letter
+  function validQuantity(quantity) {
+    return (quantity >= 0 && !Number.isNaN(Number(quantity)));
+  }
+  
+  return {
+    items: [],
+    
+    create(name, category, quantity) {
+      if (validName(name) && validCategory(category) && validQuantity(quantity)) {
+        let item = {
+          name,
+          category,
+          quantity,
+          SKU: createSKU(name, category),
+        };
+        
+        this.items.push(item);
+        return this;
+      } else {
+        return { notValid: true };
+      }
+   },
 
-ITEM NAME:
-- minimum 5 characters
-- spaces are not characters
-- ex: tea cup (valid) / pen (invalid)
+    update(sku, itemObject) { 
+      let item = this.items.filter(item => item.SKU === sku)[0];
+      let info = Object.keys(itemObject)[0];
+      item[info] = itemObject[info];
+    },
 
-CATEGORY:
-- minimum 5 character
-- only 1 word
+    delete(sku) {
+      for (let i = 0; i < this.items.length; i += 1) {
+        if (this.items[i].SKU === sku) {
+          index = i;
+        }
+      }
+      
+      this.items.splice(index, 1);
+    },
+    
+    inStock() {
+      this.items.forEach(item => {
+        if (item.quantity > 0) {
+          console.log(item);
+        }
+      });
+    },
 
-QUANTITY:
-- cannot be empty
-- valid number will be provided
+    itemsInCategory(category) {
+      this.items.forEach(item => {
+        if (item.category === category) {
+          console.log(item);
+        }
+      });
+    },
+  }
+})();
 
-ITEM MANAGER
-------------
 
-CREATE:
-- creates new item
-- return false if creation unsuccessful
+let ReportManager = (function() {
+  return {
+    init(manager) {
+      this.items = manager.items;
+    },
 
-UPDATE:
-- SKU and object as arguments 
-- updates any info on item 
-- valid values will be provided 
+    createReporter(sku) {
+      let object = {};
+      let allItems = this.items;
+      
+      object.itemInfo = function() {
+        let item = allItems.filter(item => item.SKU === sku)[0];
+        Object.keys(item).forEach(property => {
+          console.log(`${property}: ${item[property]}`);
+        });
+      }
 
-DELETE:
-- accepts SKU
-- deletes item from list
+      return object;
+    },
 
-ITEMS:
-- list of all items
+    reportInStock() {
+      let inStockItems = this.items.filter(item => {
+        return item.quantity > 0;
+      }).map(item => item.name);
 
-INSTOCK:
-- list items with quantity > 0
+      console.log(inStockItems.join(', '));
+    },
+  }
+})();
 
-ITEMSINCATEGORY:
-- list items for given category
-
-REPORTS MANAGER
----------------
-
-INIT:
-- accepts item manager object
-- assigns object to 'items' property
-
-CREATEREPORTER:
-- accepts SKU and returns object
-  - return object has 1 method 
-    - itemInfo
-      - logs properties of object as 'k/v' pairs
-
-REPORTINSTOCK:
-- log in stock items as comma seperated values 
-
-ItemManager.create('basket ball', 'sports', 0);
-ItemManager.create('asd', 'sports', 0);         // invalid item 
-ItemManager.create('soccer ball', 'sports', 5); 
-ItemManager.create('football', 'sports');       // invalid item
-ItemManager.create('football', 'sports', 3);
-ItemManager.create('kitchen pot', 'cooking items', 0); 
-ItemManager.create('kitchen pot', 'cooking', 3); 
-
-ItemManager.items; // returns list of items
+ItemManager.create('basket ball', 'sports', 0);           // valid item
+ItemManager.create('asd', 'sports', 0);
+ItemManager.create('soccer ball', 'sports', 5);           // valid item
+ItemManager.create('football', 'sports');
+ItemManager.create('football', 'sports', 3);              // valid item
+ItemManager.create('kitchen pot', 'cooking items', 0);
+ItemManager.create('kitchen pot', 'cooking', 3);          // valid item
+console.log(ItemManager.items); // 4 items
+// [
+//   {
+//     name: 'basket ball',
+//     category: 'sports',
+//     quantity: 0,
+//     SKU: 'BASSP'
+//   },
+//   {
+//     name: 'soccer ball',
+//     category: 'sports',
+//     quantity: 5,
+//     SKU: 'SOCSP'
+//   },
+//   { name: 'football', category: 'sports', quantity: 3, SKU: 'FOOSP' },
+//   {
+//     name: 'kitchen pot',
+//     category: 'cooking',
+//     quantity: 3,
+//     SKU: 'KITCO'
+//   }
+// ]
 
 ReportManager.init(ItemManager);
-ReportManager.reportInStock(); // soccer ball, football, kitchen pot
+console.log(ReportManager.reportInStock()); // soccer ball, football, kitchen pot
 
 ItemManager.update('SOCSP', { quantity: 0 });
-ItemManager.inStock(); // returns item objects for football and kitchen pot
-
-ReportManager.reportInStock(); // football, kitchen pot
-
-ItemManager.itemsInCategory('sports'); // returns list with item objects for basket ball, soccer ball and football
-
+console.log(ItemManager.inStock()); 
+// { name: 'football', category: 'sports', quantity: 3, SKU: 'FOOSP' }
+// { name: 'kitchen pot', category: 'cooking', quantity: 3, SKU: 'KITCO' }
+console.log(ReportManager.reportInStock()); // football, kitchen pot
+ItemManager.itemsInCategory('sports');
+// { name: 'basket ball', category: 'sports', quantity: 0, SKU: 'BASSP' }
+// { name: 'soccer ball', category: 'sports', quantity: 0, SKU: 'SOCSP' }
+// { name: 'football', category: 'sports', quantity: 3, SKU: 'FOOSP' }
 ItemManager.delete('SOCSP');
-ItemManager.items;
+console.log(ItemManager.items);
+// [
+//   {
+//     name: 'basket ball',
+//     category: 'sports',
+//     quantity: 0,
+//     SKU: 'BASSP'
+//   },
+//   { name: 'football', category: 'sports', quantity: 3, SKU: 'FOOSP' },
+//   {
+//     name: 'kitchen pot',
+//     category: 'cooking',
+//     quantity: 3,
+//     SKU: 'KITCO'
+//   }
+// ]
 
-let ItemManager = function(name, category, quantity) {
-  if (name.length < 5) {
-    
-  }
-}
+const kitchenPotReporter = ReportManager.createReporter('KITCO');
+kitchenPotReporter.itemInfo(); 
+// name: kitchen pot
+// category: cooking
+// quantity: 3
+// SKU: KITCO
+
+ItemManager.update('KITCO', { quantity: 10 });
+console.log(kitchenPotReporter.itemInfo());
+// name: kitchen pot
+// category: cooking
+// quantity: 10
+// SKU: KITCO

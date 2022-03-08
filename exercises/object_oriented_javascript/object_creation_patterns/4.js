@@ -10,32 +10,28 @@
 // Other than the above properties, methods, and properties inherited from Object.prototype, no other method or property should exist on the object returned by the Account prototype object.
 
 let Account = (function() {
-    let userEmail;
-    let userPassword;
-    let userFirstName;
-    let userLastName;
+  let userEmail;
+  let userPassword;
+  let userFirstName;
+  let userLastName;
+  const errorMessage = 'Invalid Password';
 
-  function isValidPassword(testPassword) {
-    return userPassword === testPassword;
-  }
-
-  function getRandomLetterNumber() {
-    let randomIndex = Math.floor(Math.random() * 62);
-    return 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRTSUVWXYZ1234567890'[randomIndex];
+  function validPassword(password) {
+    return userPassword === password;
   }
 
   function anonymize() {
-    let result = '';
-
+    let sequence = '';
+    let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     for (let i = 0; i < 16; i += 1) {
-      result += getRandomLetterNumber();
+      sequence += characters.charAt(Math.floor(Math.random() * characters.length));
     }
 
-    return result;
+    return sequence;
   }
 
   return {
-    init: function(email, password, firstName, lastName) {
+    init(email, password, firstName, lastName) {
       userEmail = email;
       userPassword = password;
       userFirstName = firstName;
@@ -44,49 +40,64 @@ let Account = (function() {
       return this;
     },
 
-    reanonymize: function(password) {
-      if (isValidPassword(password)) {
+    reanonymize(password) {
+      if (validPassword(password)) {
         this.displayName = anonymize();
         return true;
       } else {
-        return 'Invalid Password';
+        return errorMessage;
       }
     },
-
-    resetPassword: function(currentPassword, newPassword) {
-      if (isValidPassword(currentPassword)) {
+    
+    resetPassword(currentPassword, newPassword) {
+      if (validPassword(currentPassword)) {
         userPassword = newPassword;
         return true;
       } else {
-        return 'Invalid Password';
+        return errorMessage;
       }
     },
 
-    firstName: function(password) {
-      if (isValidPassword(password)) {
+    firstName(password) {
+      if (validPassword(password)) {
         return userFirstName;
       } else {
-        return 'Invalid Password';
+        return errorMessage;
       }
     },
 
-    lastName: function(password) {
-      if (isValidPassword(password)) {
+    lastName(password) {
+      if (validPassword(password)) {
         return userLastName;
       } else {
-        return 'Invalid Password';
-      }
+        return errorMessage;
+      } 
     },
 
-    email: function(password) {
-      if (isValidPassword(password)) {
+    email(password) {
+      if (validPassword(password)) {
         return userEmail;
       } else {
-        return 'Invalid Password';
+        return errorMessage;
       }
     },
-  };
+  }
 })();
+
+let fooBar = Object.create(Account).init('foo@bar.com', '123456', 'foo', 'bar');
+console.log(fooBar.firstName);                     // returns the firstName function
+console.log(fooBar.email);                         // returns the email function
+console.log(fooBar.firstName('123456'));           // logs 'foo'
+console.log(fooBar.firstName('abc'));              // logs 'Invalid Password'
+console.log(fooBar.displayName);                   // logs 16 character sequence
+console.log(fooBar.resetPassword('123', 'abc'))    // logs 'Invalid Password';
+console.log(fooBar.resetPassword('123456', 'abc')) // logs true
+
+let displayName = fooBar.displayName;
+fooBar.reanonymize('abc');                         // 
+// returns true
+console.log(displayName);
+console.log(displayName === fooBar.displayName);   // logs false
 
 let feliciabacon = Object.create(Account).init('felicia@bacon.com', 'meow', 'Felicia', 'Bacon');
 console.log(feliciabacon.firstName);
@@ -100,3 +111,104 @@ console.log(feliciabacon.resetPassword('meow', 'woof')); // true
 let displayName = feliciabacon.displayName;
 feliciabacon.reanonymize('woof'); // true
 console.log(displayName === feliciabacon.displayName); // false
+
+// fe
+
+let Account = (function() {
+  let accounts = {};
+
+  let nextId = (function() {
+    let id = 0;
+
+    return function() {
+      id += 1;
+      return id;
+    };
+  })();
+
+  function retrieveAccount(id) {
+    return accounts[String(id)];
+  }
+
+  function validPassword(id, testPassword) {
+    return retrieveAccount(id).password === testPassword;
+  }
+
+  function invalidCredentials(account, password) {
+    return !account || !validPassword(id, password);
+  }
+
+  function errorMessage() {
+    return 'Invalid password';
+  }
+  
+  function anonymize() {
+    let sequence = '';
+    let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+    for (let i = 0; i < 16; i += 1) {
+      sequence += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+
+    return sequence;
+  }
+
+  return {
+    init(email, password, firstName, lastName) {
+      this.id = nextId();
+      let newAccount = {
+        email,
+        password,
+        firstName,
+        lastName,
+        displayName: anonymize(),
+      };
+
+      accounts[this.id] = newAccount;
+      return this;
+    },
+
+    checkAccountValidity(account, password) {
+      if (invalidCredentials(account.id, password)) {
+        return errorMessage;
+      }
+    },
+    
+    reanonymize(testPassword) {
+      let account = retrieveAccount(this.id);
+      checkAccountValidity(account);
+      account.displayName = anonymize();
+      return true;
+    },
+
+    resetPassword(password, newPassword) {
+      let account = retrieveAccount(this.id);
+      checkAccountValidity(account);
+      account.password = newPassword;
+      return true;
+    },
+
+    email(password) {
+      let account = retrieveAccount(this.id);
+      checkAccountValidity(account);
+      return account.email;
+    },
+
+    firstName(password) {
+      let account = retrieveAccount(this.id);
+      checkAccountValidity(account);
+      return account.firstName;
+    },
+
+    lastName(password) {
+      let account = retrieveAccount(this.id);
+      checkAccountValidity(account);
+      return account.lastName;
+    },
+
+    displayName() {
+      let account = retrieveAccount(this.id);
+      return account.displayName;
+    },
+  };
+})();
