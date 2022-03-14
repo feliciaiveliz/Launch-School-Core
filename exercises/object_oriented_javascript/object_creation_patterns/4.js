@@ -212,3 +212,112 @@ let Account = (function() {
     },
   };
 })();
+
+// fe attempt 2
+
+// create an object that holds multiple objects
+// 
+let Account = (function() {
+  let accounts = {};
+  const INVALID_PASSWORD = 'Invalid Password';
+
+  function validPassword(testPassword, account) {
+    return (testPassword === account.password);
+  }
+
+  function anonymize() {
+    let result = '';
+    let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+    for (let i = 0 ; i <= 16; i += 1) {
+      let index = Math.floor(Math.random() * characters.length);
+      result += characters[index];
+    }
+
+    return result;
+  }
+
+  return {
+    init(email, password, firstName, lastName) {
+
+      let newAccount = {
+        email,
+        password,
+        firstName,
+        lastName,
+      };
+      
+      this.displayName = anonymize();
+      accounts[this.displayName] = newAccount;
+      return this;
+    },
+
+    reanonymize(password) {  
+      let account = accounts[this.displayName]; 
+
+      if (validPassword(password, account)) {
+        let oldDisplayName = this.displayName; 
+        this.displayName = anonymize(); 
+        accounts[this.displayName] = account;
+        delete accounts[oldDisplayName];
+        return true;
+      } else {
+        return INVALID_PASSWORD;
+      }
+    },
+
+    resetPassword(currentPassword, newPassword) {
+      let account = accounts[this.displayName];
+
+      if (validPassword(currentPassword, account)) {
+        account.password = newPassword;
+        return true;
+      } else {
+        return INVALID_PASSWORD;
+      }
+    },
+
+    firstName(password) {
+      let account = accounts[this.displayName];
+      return (validPassword(password, account) ? account.firstName : INVALID_PASSWORD);
+    },
+
+    lastName(password) {
+      let account = accounts[this.displayName];
+      return (validPassword(password, account) ? account.lastName : INVALID_PASSWORD);
+    },
+
+    email(password) {
+      let account = accounts[this.displayName];
+      return (validPassword(password, account) ? account.email : INVALID_PASSWORD);
+    },
+
+    displayAccounts() {
+      console.log(accounts);
+    }
+  }
+})();
+
+let fooBar = Object.create(Account).init('foo@bar.com', '123456', 'foo', 'bar');
+console.log(fooBar.firstName);                     // returns the firstName function
+console.log(fooBar.email('123456'));                         // returns the email function
+console.log(fooBar.firstName('123456'));           // logs 'foo'
+console.log(fooBar.firstName('abc'));              // logs 'Invalid Password'
+console.log(fooBar.displayName);                   // logs 16 character sequence
+console.log(fooBar.resetPassword('123', 'abc'))    // logs 'Invalid Password'
+console.log(fooBar.resetPassword('123456', 'abc')) // logs true
+console.log(fooBar.displayAccounts());
+
+let displayName = fooBar.displayName;
+fooBar.reanonymize('abc');                         // returns true
+console.log('**');
+console.log(displayName);
+console.log(fooBar.displayName);
+console.log(displayName === fooBar.displayName);   // logs false
+console.log(fooBar.displayAccounts()); 
+
+let bazQux = Object.create(Account).init('baz@qux.com', '123456', 'baz', 'qux');
+console.log(bazQux.displayAccounts());
+console.log(fooBar.firstName('abc'));    // foo
+console.log(bazQux.firstName('123456')); // baz
+console.log(fooBar.email('abc'));     // 'foo@bar.com'
