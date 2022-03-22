@@ -23,7 +23,7 @@
 // The returned object has one method, itemInfo. It logs to the console all the properties of an object as "key:value" pairs (one pair per line). There are no other properties or methods on the returned object (except for properties/methods inherited from Object.prototype).
 // reportInStock: Logs to the console the item names of all the items that are in stock as a comma separated values.
 
-Notes:
+// Notes:
 
 // There's no need to add the ability to validate the uniqueness of the SKU code. Given the current description, it's possible that a duplicate will exist.
 // Each required piece of information for an item corresponds to one property.
