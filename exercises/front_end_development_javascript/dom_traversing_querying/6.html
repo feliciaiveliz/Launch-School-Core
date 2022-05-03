@@ -1,0 +1,68 @@
+<!-- 
+  - function takes two arguments that represent ids to swap
+  - returns true for valid swap
+  - returns undefined for invalid swap
+  - invalid?: 
+    - id attributes doesn't exist
+    - one of the nodes is a child of the other
+-->
+
+<!doctype html>
+<html>
+  <head>
+    <title>Node Swap</title>
+  </head>
+  <body>
+    <div id="1">
+      <div id="4"></div>
+      <div id="5">
+        <div id="6"></div>
+      </div>
+    </div>
+    <div id="2"></div>
+    <div id="3">
+      <div id="7"></div>
+      <div id="8"></div>
+      <div id="9"></div>
+    </div>
+  </body>
+</html>
+
+// one of the nodes doesn't exist
+// clone both nodes
+// swap nodes in DOM
+
+<!-- function invalidSwap(first, second) {
+  return (!first || !second) || (first.contains(second) || second.contains(first));
+}
+
+function getId(id) {
+  return document.getElementById(id);
+}
+
+function nodeSwap(id1, id2) {
+  let firstNode = getId(id1);
+  let secondNode = getId(id2);
+
+  if (invalidSwap(firstNode, secondNode)) {
+    return undefined;
+  } else {
+    let firstClone = firstNode.cloneNode(true);
+    let secondClone = secondNode.cloneNode(true);
+    let firstParent = firstNode.parentNode;
+    let secondParent = secondNode.parentNode;
+    
+    firstParent.replaceChild(secondClone, firstNode);
+    secondParent.replaceChild(firstClone, secondNode);
+    return true;
+  }
+}
+
+// nodeSwap(1, 20);
+// nodeSwap(9, 3);
+
+// one swap
+// nodeSwap(1, 2);
+// multiple swaps
+nodeSwap(3, 1);
+nodeSwap(7, 9); -->

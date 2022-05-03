@@ -6,6 +6,6 @@ let promise = new Promise((resolve, reject) => {
   }, 2000);
 });
 
-promise.catch(value => {
-  console.log(value);
+promise.catch(result => {
+  console.log(result);
 });
