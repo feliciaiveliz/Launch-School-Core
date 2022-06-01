@@ -13,6 +13,23 @@ Use this HTML and sample run to test out your code:
 <html>
   <head>
     <title>Tree Slicing</title>
+    <script>
+      function sliceTree(start, end, result = []) {
+        let startNode = document.getElementById(start);
+        let endNode = document.getElementById(end);
+
+        if (!startNode || !endNode) return undefined;
+        if (!startNode.contains(endNode)) return undefined;
+        
+        result.unshift(endNode.tagName);
+
+        if (endNode.parentNode.id >= start) {
+          return sliceTree(start, endNode.parentNode.id, result);
+        } else {
+          return result;
+        }
+      }
+    </script>
   </head>
   <body>
     <article id="1">1
@@ -60,30 +77,31 @@ Use this HTML and sample run to test out your code:
   </body>
 </html>
 
-<!-- function sliceTree(start, end) {
-  let endElement = document.getElementById(end);
-  let startElement = document.getElementById(start);
-
-  if (!startElement || !endElement) {
-      return undefined;
-  }
-
-  let slicedTree = [];
-  let currentElement;
-
-  do {
-      currentElement = endElement;
-      slicedTree.unshift(currentElement.tagName);
-      endElement = endElement.parentNode;
-  } while (currentElement.id !== String(start) && endElement.tagName !== 'BODY');
-
-  return (endElement.tagName === 'BODY' && currentElement.id !== String(start) ? undefined : slicedTree);
-}
-
-sliceTree(1, 4);
-sliceTree(1, 76);
-sliceTree(2, 5);
-sliceTree(5, 4);
-sliceTree(1, 23);
-sliceTree(1, 22);
-sliceTree(11, 19); -->
+<!-- // input: 
+// - start index: id of parent node
+// - end index: id of innermost child node
+// output:
+// - array of tagName of nodes from parent to innermost child
+// rules:
+// - include the innermost child in returned array of tagNames
+// - end index doesn't have to be id of innermost child
+// - only element nodes - no text nodes
+// - only element nodes with body as ancestor 
+// - if id of start or end is not in DOM, return undefined
+// - if there is no path from start index id to end index id, return undefined 
+//   - for example, sibling elements
+// mental model:
+// - start at the end index - get current node's tagName
+// - loop: get every parentNode node of the current node
+// - do this until we reach the node of the start id index - get that tagName
+// - return array of tagNames
+// algorithm:
+// - if id doesn't exist in DOM, return undefined
+// - if the end index id is a sibling of start index id, return undefined
+// - set 'result' to []
+// - if node's id >= start index id
+//   - recurse: 
+//     - get current node
+//     - get tagName of current element, unshift onto result
+//     - get parentNode.id of current element -> pass to 'sliceTree', with result
+// - otherwise return 'result' -->

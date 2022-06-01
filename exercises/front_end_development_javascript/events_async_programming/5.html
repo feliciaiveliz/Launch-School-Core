@@ -4,6 +4,21 @@
     <title>Title</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="profile.css">
+    <script>
+      let main = document.querySelector('main');
+      let sub = document.getElementById('sub');
+
+      main.addEventListener('contextmenu', event => {
+        event.preventDefault();
+        alert("MAIN");
+      });
+
+      sub.addEventListener('contextmenu', event => {
+        event.preventDefault();
+        event.stopPropagation();
+        alert("SUB");
+      });
+    </script>
   </head>
   <body>
     <main>
@@ -36,73 +51,3 @@
     width: 50%;
   }
 </style>
-
-<!-- let divRed = document.querySelector('#red');
-let divBlue = document.querySelector('#blue');
-let divGreen = document.querySelector('#green');
-let divOrange = document.querySelector('#orange');
-
-divRed.addEventListener('click', track(event => {
-  document.body.style.background = 'red';
-}));
-
-divBlue.addEventListener('click', track(event => {
-  event.stopPropagation();
-  document.body.style.background = 'blue';
-}));
-
-divOrange.addEventListener('click', track(event => {
-  document.body.style.background = 'orange';
-}));
-
-divGreen.addEventListener('click', track(event => {
-  document.body.style.background = 'green';
-}));
-
-// create 'tracker' object
-let tracker = (() => {
-  let eventObjects = [];
-  let elements = [];
-
-  return {
-    add(event) {
-      if (!eventObjects.includes(event)) {
-        eventObjects.push(event);
-      }
-    },
-
-    list() {
-      return eventObjects.slice(0);
-    },
-
-    elements() {
-      return eventObjects.map(event => {
-        return event.target;
-      });
-    },
-
-    clear() {
-      eventObjects = [];
-      return eventObjects.length;
-    }
-  }
-})();
-
-// track function (takes a callback)
-// function that tracks event on page
-
-function track(callback) {
-  // function adds event to 'tracker' object 
-  // function then invokes callback and passes in event object
-  return function(event) {
-    tracker.add(event);
-    callback(event); 
-  }
-}
-
-// divRed.addEventListener('click', track(event => {  // invoking 'track with a callback'
-//   document.body.style.background = 'red';
-// }));
-
-// return value of 'track' is what is passed to 'addEventListener' as second argument
-// addEventListener needs a function object  -->

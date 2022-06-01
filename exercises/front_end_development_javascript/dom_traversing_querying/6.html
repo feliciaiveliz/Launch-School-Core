@@ -11,6 +11,16 @@
 <html>
   <head>
     <title>Node Swap</title>
+    <script>
+      function nodeSwap(id1, id2) {
+        let [node1, node2] = [document.getElementById(id1), document.getElementById(id2)];
+        let [clone1, clone2] = [node1.cloneNode(true), node2.cloneNode(true)];
+        
+        node1.replaceWith(clone2);
+        node2.replaceWith(clone1);
+        return true;
+      }
+    </script>
   </head>
   <body>
     <div id="1">
@@ -27,42 +37,3 @@
     </div>
   </body>
 </html>
-
-// one of the nodes doesn't exist
-// clone both nodes
-// swap nodes in DOM
-
-<!-- function invalidSwap(first, second) {
-  return (!first || !second) || (first.contains(second) || second.contains(first));
-}
-
-function getId(id) {
-  return document.getElementById(id);
-}
-
-function nodeSwap(id1, id2) {
-  let firstNode = getId(id1);
-  let secondNode = getId(id2);
-
-  if (invalidSwap(firstNode, secondNode)) {
-    return undefined;
-  } else {
-    let firstClone = firstNode.cloneNode(true);
-    let secondClone = secondNode.cloneNode(true);
-    let firstParent = firstNode.parentNode;
-    let secondParent = secondNode.parentNode;
-    
-    firstParent.replaceChild(secondClone, firstNode);
-    secondParent.replaceChild(firstClone, secondNode);
-    return true;
-  }
-}
-
-// nodeSwap(1, 20);
-// nodeSwap(9, 3);
-
-// one swap
-// nodeSwap(1, 2);
-// multiple swaps
-nodeSwap(3, 1);
-nodeSwap(7, 9); -->

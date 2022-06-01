@@ -45,6 +45,20 @@
          background: #E0EAF1;
      }
     </style>
+    <script>
+      function colorGeneration(target) {
+        let children = Array.from(document.body.children);
+
+        for (let i = 0; i < target; i += 1) {
+          let newChildren = [];
+          children.forEach(child => {
+            newChildren.push(...Array.from(child.children));
+          });
+        }
+
+        children;
+      }
+    </script>
   </head>
 
   <body>
@@ -92,34 +106,3 @@
     </article>
   </body>
 </html>
-
-<!-- function colorGeneration(targetGeneration) {
-  let generation = 0;
-  let parents = [document.body];
-  let elements;
-
-  while (generation < targetGeneration) {
-      generation += 1;
-      elements = getAllChildrenOf(parents);
-      parents = elements;
-  }
-
-  if (elements) {
-      color(elements);
-  }
-}
-
-function color(elements) {
-  elements.forEach(({classList}) => {
-      classList.add('generation-color');
-  });
-}
-
-function getAllChildrenOf(parents) {
-  return parents.map(({children}) => Array.prototype.slice.call(children)).reduce((collection, children) => collection.concat(children), []);          
-}
-
-colorGeneration(1);
-colorGeneration(2);
-colorGeneration(5);
-colorGeneration(7); -->

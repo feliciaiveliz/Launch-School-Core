@@ -51,47 +51,43 @@
     </footer>
   </article>
 </body>
+<!-- <script>
+  function domTreeTracer(id, tree = []) {
+    let node = document.getElementById(id);
+    let children = Array.from(node.parentNode.children).map(node => node.nodeName);
+    tree.push(children);
 
+    if (node.parentNode.id) {
+      return domTreeTracer(node.parentNode.id, tree);
+    } else {
+      return tree;
+    }
+  }
+</script> -->
+
+<script>
+  function domTreeTracer(id, tree = []) {
+    let currentElement = document.getElementById(id);
+    let parent = currentElement.parentNode;
+    let children = Array.from(parent.children);
+    
+    if (parent.tagName === 'BODY') {
+      tree.push([currentElement.tagName]);
+      return tree;
+    } else {
+      let kids = children.map(({tagName}) => tagName);
+      tree.push(kids);
+      return domTreeTracer(parent.id, tree);
+    }
+  }
+
+console.log(domTreeTracer(2));
+console.log(domTreeTracer(22));
+</script>
 </html>
 
-<!-- - create 'result' array
-- given an id, return array of subarrays
-  - first subarray:
-    - return current element node and it's siblings
-  - second subarray:
-    - return parent of current node and it's siblings
-- with id, get the current element
-  - get the 'node name' of the current element, uppercase it
-  - push to subarray1, push to 'result'
-  - get siblings of current element
-    - either get parent of current node and check for child nodes minus current nodes
-    - get parent node of current element
-    - get array of children nodes of parent node
-    - filter child nodes that are not the current node
-    - get node names of the siblings and uppercase the names (map)
-    - push this array to 'result' -->
+// create function that takes id
+// starting element = passed in id
+// starting parent = passed in id
+// starting children = parent's children
 
-    <!-- function domTreeTracer(id) {
-      let currentElement = document.getElementById(id);
-      let parentElement;
-      let domTree = [];
-  
-      do {
-          parentElement = currentElement.parentNode;
-          let children = getTagNames(parentElement.children);
-          domTree.push(children);
-  
-          currentElement = parentElement;
-      } while (parentElement.tagName !== 'BODY');
-  
-      return domTree;
-  }
-  
-  function getTagNames(htmlCollection) {
-      let elementsArray = Array.from(htmlCollection);
-      return elementsArray.map(({tagName}) => tagName);
-  }
-  
-  // domTreeTracer(1);
-  domTreeTracer(2);
-  domTreeTracer(22); -->

@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>Tests</title>
+    <title>Event Tracker</title>
     <meta charset="utf-8">
     <style>
       #red, #blue, #green, #orange {
@@ -45,3 +45,54 @@
     <script src="test.js"></script>
   </body>
 </html>
+<script>
+  let divRed = document.querySelector('#red');
+  let divBlue = document.querySelector('#blue');
+  let divGreen = document.querySelector('#green');
+  let divOrange = document.querySelector('#orange');
+
+  divRed.addEventListener('click', track(event => {
+    document.body.style.background = 'red';
+  }));
+
+  divBlue.addEventListener('click', track(event => {
+    event.stopPropagation();
+    document.body.style.background = 'blue';
+  }));
+
+  divOrange.addEventListener('click', track(event => {
+    document.body.style.background = 'orange';
+  }));
+
+  divGreen.addEventListener('click', track(event => {
+    document.body.style.background = 'green';
+  }));
+
+  function track(callback) {
+    return function(event) {
+      tracker.add(event);
+      callback(event);
+    }
+  }
+  let tracker = (() => {
+    let list = [];
+
+    return {
+      add(event) {
+        list.push(event);
+      },
+
+      list() {
+        return list.slice(0);
+      },
+      
+      elements() {
+        return list().map(({target}) => target);
+      },
+
+      clear() {
+        return list = [];
+      }
+    }
+  })();
+</script>

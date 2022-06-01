@@ -2,6 +2,25 @@
 
 // While running, randomizer should log the elapsed time every second: 1, 2, 3, ..., 2 * n.
 
+// call callback at a random point in time
+// take number of callbacks * 2 to get the time needed
+// 5 callbacks = 10 seconds
+// log elapsed time every seconds: 1, 2, 3, callback1, 4, etc.
+
+// - put all callbacks into an array
+// - loop for callbacks array length * 2
+// - use setTimeout to log the current number every 1 second
+
+// - iterate over the callbacks array and for each callback
+//   - specify at what point in time to call the callback
+//   - get random number to use as the timestamp to call
+//     - Math.floor(Math.random() * 1000) + 1
+
+
+
+
+
+
 function callback1() {
   console.log('callback1');
 }
@@ -15,39 +34,16 @@ function callback3() {
 }
 
 function randomizer(...callbacks) {
-  if (callbacks.length < 1) {
-    return;
-  }
-
-  let end = 2 * callbacks.length;
-  let timeElapsed = 0;
-
-  let timeLogger = setInterval(() => {
-    timeElapsed += 1;
-    console.log(timeElapsed);
-
-    if (timeElapsed >= end) {
-      clearInterval(timeLogger);
-    }
-  }, 1000);
+  let timeLimit = callbacks.length * 2;
 
   callbacks.forEach(callback => {
-    let executeTime = Math.floor(Math.random() * end * 1000);
-    setTimeout(callback, executeTime);
+    let randomTime = Math.floor(Math.random() * timeLimit) + 1;
+    setTimeout(callback, randomTime * 1000);
   });
-}
 
-function randomizer(...callbacks) {
-  const totalSeconds = 2 * callbacks.length;
-  let executeTime = Math.floor(Math.random() * totalSeconds * 1000) + 1;
-
-  for (let i = 1; i <= totalSeconds; i += 1) {
+  for (let i = 1; i <= timeLimit; i += 1) {
     setTimeout(() => console.log(i), i * 1000);
   }
-
-  callbacks.forEach(callback => {
-    setTimeout(callback, executeTime());
-  });
 }
 
 randomizer(callback1, callback2, callback3);

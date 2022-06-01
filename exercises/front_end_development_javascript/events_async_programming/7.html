@@ -1,0 +1,98 @@
+<html>
+  <head>
+    <title>Event Tracker</title>
+    <meta charset="utf-8">
+    <style>
+      #red, #blue, #green, #orange {
+        cursor: pointer;
+        color: white;
+        padding: 10px;
+        margin: 10px;
+      }
+    
+      #red {
+        width: 400px;
+        height: 400px;
+        background: red;
+      }
+
+      #blue {
+        width: 200px;
+        height: 200px;
+        background: blue;
+      }
+
+      #orange {
+        width: 100px;
+        height: 100px;
+        background: orange;
+      }
+
+      #green {
+        width: 50px;
+        height: 50px;
+        background: green;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="red">Red
+      <div id="blue">Blue</div>
+      <div id="orange">Orange
+        <div id="green">Green</div>
+      </div>
+    </div>
+    <script src="test.js"></script>
+  </body>
+</html>
+<script>
+  let divRed = document.querySelector('#red');
+  let divBlue = document.querySelector('#blue');
+  let divGreen = document.querySelector('#green');
+  let divOrange = document.querySelector('#orange');
+
+  divRed.addEventListener('click', track(event => {
+    document.body.style.background = 'red';
+  }));
+
+  divBlue.addEventListener('click', track(event => {
+    event.stopPropagation();
+    document.body.style.background = 'blue';
+  }));
+
+  divOrange.addEventListener('click', track(event => {
+    document.body.style.background = 'orange';
+  }));
+
+  divGreen.addEventListener('click', track(event => {
+    document.body.style.background = 'green';
+  }));
+
+  function track(callback) {
+    return function(event) {
+      tracker.add(event);
+      callback(event);
+    }
+  }
+  let tracker = (() => {
+    let list = [];
+
+    return {
+      add(event) {
+        list.push(event);
+      },
+
+      list() {
+        return list.slice(0);
+      },
+      
+      elements() {
+        return list().map(({currentTarget}) => currentTarget);
+      },
+
+      clear() {
+        return list = [];
+      }
+    }
+  })();
+</script>

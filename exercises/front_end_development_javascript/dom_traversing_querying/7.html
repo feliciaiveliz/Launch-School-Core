@@ -10,16 +10,3 @@
   </body>
 </html>
 
-<!-- // iterate through the children of the "BODY"
-// iterate until node is not a parent node
-// if node doesn't have child, [parent node, []]
-// if node does have child or children, [parent node, [child], [child]]
-// if node has child that has child, [parent node, [child], [(child) parent node, []]]
-
-function nodesToArray(node = document.body) {
-  let parentName = node.tagName;
-  let children = Array.prototype.slice.call(node.children) || [];
-  return [parentName, children.map(nodesToArray)]
-}
-
-nodesToArray(); // ["BODY",[["HEADER",[]],["MAIN",[]],["FOOTER",[]]]] -->
