@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Practice using jQuery</title>
+    <meta charset="utf-8" />
+    <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.6/handlebars.js" integrity="sha512-MQkEjxbZvzs4TX8ES4/tTIyaYdtDlJzVocnPo0GoysTR0jCmNg0P2is7uqpCoWxmoS9X84CDVzuWgZD/R/Q2oQ==" crossorigin="anonymous"></script>     </head>
+  <body>
+    <script id="tags" type="text/x-handlebars">
+      <strong>{{this}}</strong>
+    </script>
+
+    <script id="post" type="text/x-handlebars">
+      {{#each posts}}
+        <article>
+          <h1>{{title}}</h1>
+          <p><time>Posted on {{published}}</time></p>
+          {{{body}}}
+          <footer>
+            {{#if tags}}
+              <p>
+                Tags:
+                {{#each tags}}
+                {{> tags}}
+                {{/each}}
+              </p>
+            {{else}}
+              <p>Not tagged</p>
+            {{/if}}
+          </footer>
+        </article>
+      {{/each}}
+    </script>
+
+    <script type="text/javascript">
+      let posts = [];
+
+      let post1 = {
+        title: 'Lorem ipsum dolor sit amet',
+        published: 'April 1, 2015',
+        body: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit.',
+        tags: ['lifestyle', 'education'],
+      };
+
+      let post2 = {
+        title: 'Fall Has Begun',
+        published: 'June 13, 2022',
+        body: "I love fall"
+      };
+
+      post.body = '<p>' + post.body + '</p>';
+      [post1, post2].forEach(post => posts.push(post));
+
+      let postTemplate = Handlebars.compile($('#post').html());
+      let tagsTemplate = Handlebars.compile($('#tags').html());
+      Handlebars.registerPartial('tags', $('#tags').html());
+
+      $(document.body).append($('body').append(postTemplate({ posts: posts })));
+    </script>
+  </body>
+</html>

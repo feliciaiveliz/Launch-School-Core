@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Attributes</title>
+  <script>
+    $('a').on('click', function(event) {
+      event.preventDefault();
+
+      $('article').hide().filter('[data-block=' + $(this).attr('data-block') + ']').show();
+    }
+  </script>
+</head>
+<body>
+  <ul>
+    <li><a href="#" data-block="gold">Gold Sponsors</a></li>
+    <li><a href="#" data-block="silver">Silver Sponsors</a></li>
+    <li><a href="#" data-block="bronze">Bronze Sponsors</a></li>
+  </ul>
+  
+  <article data-block="gold">
+    <h1>Gold Sponsors</h1>
+  </article>
+  
+  <article data-block="silver">
+    <h1>Silver Sponsors</h1>
+  </article>
+  
+  <article data-block="bronze">
+    <h1>Bronze Sponsors</h1>
+  </article>   
+</body>
+</html>

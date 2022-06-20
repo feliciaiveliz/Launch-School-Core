@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Adding Schedules</title>
+    <meta charset="utf-8" />
+    <style>
+      .schedule {
+        border-radius: 10px;
+        border-color: green;
+        border-style: bold;
+      }
+
+      legend {
+        font-weight: bold;
+      }
+
+      .input {
+        border: none;
+        color: green;
+        font-weight: bold;
+        text-align: right;
+        float: left;
+      }
+
+      #add_schedule {
+        border: none;
+        color: white;
+        border-radius: 5px;
+        background: green;
+        border-color: green;
+        width: 100px;
+        height: 35px;
+        margin-bottom: 15px;
+     }
+
+      #submit {
+        border: none;
+        color: white;
+        border-radius: 5px;
+        background: red;
+        border-color: red;
+        width: 100px;
+        height: 30px;
+        margin-top: 17px;
+     }
+    </style>
+    <script>
+      let form = document.getElementById('form');
+      let select = document.querySelector('select');
+      let schedule = document.querySelector('.schedule');
+      let submitButton = document.getElementById('submit');
+      let addScheduleButton = document.getElementById('add_schedule');
+  
+      function convertToJson(form) {
+        let schedule = {};
+        let jsonObject = { "schedules": [] };
+        let formData = new FormData(form);
+  
+        for (object of formData) {
+          schedule[object[0]] = object[1];
+        }
+  
+        jsonObject.schedules.push(schedule);
+        return JSON.stringify(jsonObject);
+      }
+  
+      // populate select menu
+      (() => {
+        let request = new XMLHttpRequest();
+        request.open("GET", 'http://localhost:3000/api/staff_members');
+  
+        request.addEventListener('load', () => {
+          let object = JSON.parse(request.response);
+  
+          for (let obj of object) {
+            let option = new Option(obj.name, obj.id);
+            select.appendChild(option);
+          }
+        });
+  
+        request.send();
+      })();
+  
+      // add more schedules 
+      addScheduleButton.addEventListener('click', () => {
+        let newSchedule = schedule.cloneNode(true);
+        let AllNumbers = document.querySelectorAll('span');
+        let lastNumber = Number(AllNumbers[AllNumbers.length - 1].textContent);
+        newSchedule.querySelector('span').textContent = lastNumber + 1;
+        form.insertBefore(newSchedule, submitButton);
+      });
+  
+      // submit the form
+      form.addEventListener('submit', event => {
+        event.preventDefault();
+  
+        let request = new XMLHttpRequest();
+        request.open('POST', form.action);
+        request.setRequestHeader('Content-Type', 'application/json');
+  
+        request.addEventListener('load', event => {
+          if (request.status === 201) {
+            alert(request.responseText);
+            form.reset();
+          } else if (request.status === 400) {
+            alert(request.response);
+          }
+        });
+  
+        let data = convertToJson(form);
+        request.send(data);
+      });
+    </script>
+  </head>
+  <body>
+    <button type="button" id="add_schedule">Add More Schedules</button>
+    <form id="form" action="/api/schedules" method="post" >
+      <fieldset class="schedule"><legend>Schedule <span>1</span></legend>
+        <fieldset class="input">
+          <label for="staff_id">Staff Name: </label>
+          <select name="staff_id" required>
+            <option value="">Select Name</option>
+          </select>
+        </fieldset>
+
+        <fieldset class="input">
+          <label for="date">Date: </label>
+          <input type="date" name="date" required />
+        </fieldset>
+
+        <fieldset class="input">
+          <label for="time">Time: </label>
+          <input type="time" name="time" required />
+        </fieldset>
+      </fieldset>
+      <input type="submit" id="submit" />
+    </form>
+  </body>
+</html>

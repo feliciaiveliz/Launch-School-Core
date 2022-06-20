@@ -38,3 +38,32 @@
     </div>
   </body>
 </html>
+
+
+
+
+
+
+
+
+
+function findItems() {
+  let checked = [];
+  let unchecked = [];
+  
+  let labels = document.querySelectorAll('label');
+  
+  labels.forEach(label => {
+    let label = label.querySelector('span').textContent;
+
+    if (label.checked) {
+      checked.push(item);
+    } else {
+      unchecked.push(item);
+    }
+  });
+  
+  return [checked, unchecked];
+}
+
+findItems();

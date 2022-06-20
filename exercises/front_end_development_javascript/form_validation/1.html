@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Sign Up Form</title>
+  <style>
+    label, button {
+      display: block;
+    }
+
+    input.invalid {
+      border-color: red;
+    }
+
+    button {
+      margin-top: 10px;
+    }
+
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <form action="#" novalidate>
+    <label for="first-name">First Name: </label>
+    <input type="text" id="first-name" name="first-name" required />
+    <span class="error"></span>
+
+    <label for="last-name">Last Name: </label>
+    <input type="text" id="last-name" name="last-name" minlength="10" required />
+    <span class="error"></span>
+
+    <label for="email">Email Address: </label>
+    <input type="text" id="email" name="email" required />
+    <span class="error"></span>
+
+    <label for="password">Password: </label>
+    <input type="text" id="password" name="password" required />
+    <span class="error"></span>
+
+    <label for="phone">Phone Number: </label>
+    <input type="text" id="phone" name="phone" pattern="\d{3}-\d{3}-\d{4}" required />
+    <span class="error"></span>
+  </form>
+
+  <script>
+    function validateFirstName(input) {
+      if (input.validity.valueMissing) {
+        return "First Name is a required field."
+      }
+    }
+
+    function validateLastName(input) {
+      if (input.validity.valueMissing) {
+        return "Last Name is a required field."
+      }
+    }
+    
+    function validateEmail(input) {
+      if (input.validity.valueMissing) {
+        return "Email is a required field."
+      } else if (input.validity.patternMismatch) {
+        return "Please enter a valid email address that matches the pattern."
+      }
+    }
+    
+    function validatePassword(input) {
+      if (input.validity.valueMissing) {
+        return "Password is a required field."
+      } else if (input.validity.tooShort) {
+        return "Password must be at least 10 characters.";
+      }
+    }
+    
+    function validatePhone(input) {
+      if (input.validity.patternMismatch) {
+        return "Please enter a valid phone number that matches the pattern."
+      }
+    }
+    
+    let form = document.querySelector('form');
+
+    form.addEventListener('focusout', event => {
+      let target = event.target;
+
+      if (!target.validity.valid) {
+        target.classList.add('invalid');
+        let message;
+
+        switch (target.id) {
+          case 'first-name':
+            message = validateFirstName(target);
+            break;
+          case 'last-name':
+            message = validateLastName(target);
+            break;
+          case 'email':
+            message = validateEmail(target);
+            break;
+          case 'password': 
+            message = validatePassword(target);
+            break;
+          case 'phone':
+            message = validatePhone(target);
+            break;
+        }
+
+        target.nextElementSibling.textContent = message;
+      }
+
+      if (form.checkValidity()) {
+        form.firstElementChild.textContent = '';
+      }
+    });
+
+      form.addEventListener('focusin', evnet => {
+        let target = event.target;
+
+        target.nextElementSibling.textContent = '';
+        target.classList.remove('invalid');
+      });
+
+      let button = document.querySelector('#submit');
+      button.addEventListener('click', event => {
+        if (form.checkValidity()) {
+          // submit form
+          form.firstElementChild.textContent = '';
+          form.reset();
+        } else {
+          form.nextElementSibling.textContent = message;
+        }
+      });
+  </script>
+</body>
+</html>
