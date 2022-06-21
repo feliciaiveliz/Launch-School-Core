@@ -34,7 +34,7 @@ Approach:
 - update the values in the template for photos (first photo)
 
 Template 1:
-<script id="photos" type="text/x-handlebars">
+```<script id="photos" type="text/x-handlebars">
   {{#each photos}}                            
     <figure data-id="{{id}}">                
       <img src="{{src}}" />                   
@@ -42,14 +42,15 @@ Template 1:
     </figure>
   {{/each}}
 </script>
-
-<!-- 
+```
+```
 {{id}} -> 1
 {{src}} -> "http://via.placeholder.com/1280x1024"
 {{caption}} -> -> "Lorem ipsum dolor sit amet, consectetur adipiscing elit," 
--->
+```
 
 Template 2: 
+```
 <script id="photo_information" type="text/x-handlebars">
   <h2>{{title}}</h2>
   <p><time>Taken on {{created_at}}</time></p>
@@ -72,13 +73,13 @@ Template 2:
       {{/if}}
       Favorites
     </a>
-
-<!-- 
+```
+```
 {{title}}      -> "City Lights"
 {{created_at}} -> "3/14/2015"
 {{likes}}      -> 4
 {{favorites}}  -> 2 
--->
+```
 
 ## Step 2: Render Comments for First Photo
 ---
@@ -87,17 +88,21 @@ Template 2:
 - Returns: array of comments for the photo with `photo_id`
 
 Template 3: 
+```
 <script id="photo_comments" type="text/x-handlebars">
   {{#each comments}}
   {{> photo_comment}}
   {{/each}}
 </script>
-
+```
+```
 {{comments}} -> array of comments
 [{"name":"Shane Riley","photo_id":1,"gravatar":"http://gravatar.com/avatar/9f6f9c0b100d371267f07a12f73edf9d","date":"3/31/15","body":"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},{"name":"Constance Zemicky","photo_id":1,"gravatar":"http://gravatar.com/avatar/0af2673451bb2c52eda2a7aa1f2467c9","date":"3/31/15",
 "body":"Keffiyeh next level readymade, hashtag chillwave tofu freegan PBR&B cray four dollar toast Echo Park art party American Apparel Portland skateboard. Semiotics Bushwick flexitarian, plaid drinking vinegar deep v keytar lomo squid banjo sustainable try-hard PBR cronut ethical. Scenester bitters roof party tofu, disrupt flannel deep v Brooklyn meditation actually blog Austin pop-up Thundercats wayfarers. Fingerstache High Life brunch VHS, sriracha Bushwick hashtag Helvetica banh mi raw denim. Flannel Etsy keffiyeh blog stumptown bespoke leggings cornhole. Heirloom PBR&B letterpress blog Odd Future readymade messenger bag, aesthetic literally. Yr Banksy banh mi authentic PBR."}]
+```
 
 Template 4 Partial: 
+```
 <script id="photo_comment" data-type="partial" type="text/x-handlebars">
   <li>
     <article>
@@ -112,15 +117,16 @@ Template 4 Partial:
     </article>
   </li>
 </script>
-
-<!-- 
+```
+``` 
 {{gravatar}} -> "http://gravatar.com/avatar/9f6f9c0b100d371267f07a12f73edf9d"
 {{name}}     -> "Shane Riley"
 {{date}}     -> "3/31/15"
 {{body}}     -> "Lorem ipsum dolor sit amet" 
--->
+```
 
-Step 3: Create the Slide Show Functionality
+## Step 3: Create the Slide Show Functionality
+---
 - handle slideshow functionality
 - this fades the current photo and renders the next photo/information/comments 
 Requirements:
@@ -160,11 +166,10 @@ Approach:
     - fade out current photo
     - fade in next photo
     - render new photo/photo-information/comments 
+
+# Part 3 - Like, Favorite, Comment
+## Step 4: Like and Favorite a Photo
 ---
-
-## Part 3 - Like, Favorite, Comment
-
-### Step 4: Like and Favorite a Photo
 - when user clicks on like (heart) or favorite (star), increase the counts for either
 
 Like:
