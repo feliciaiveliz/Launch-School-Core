@@ -3,7 +3,6 @@
   <head>
     <meta charset="utf-8">
     <title>Felicia's Contacts Manager</title>
-    <meta name="description" content="Contact Manager using Backbone.js, Localstorage, RequireJS, Handlebar and Bootstrap">
     <script src="javascripts/contacts.js"></script>
     <link rel="stylesheet" href="stylesheets/main.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.js"></script>
@@ -23,7 +22,7 @@
 <script id="main-page" type="text/x-handlebars">
   <div class="main-page">
     <button class="add-contact-button">Add Contact</button>
-    <input type="text" name="search" placeholder="Search by Contact Name"></input>
+    <input type="search" name="search" placeholder="Search by Contact Name"></input>
   </div>
 
   {{#if contacts}}
@@ -89,8 +88,9 @@
       </div>
 
       <div class="tags">
-        <label for="tags">Tags: </label>
-        <input type="text" name="tags" id="tags" value="none">
+        <label for="tags"></label>
+        <button class="submit-tag" type="submit">Add Tag</button>
+        <input type="text" name="tags" id="tags" value="">
       </div>
       
       <button class="submit" type="submit">Submit</button>
