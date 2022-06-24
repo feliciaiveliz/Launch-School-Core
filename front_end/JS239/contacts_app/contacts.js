@@ -83,6 +83,12 @@ class View {
     main.insertAdjacentHTML('beforeend', this.templates['edit-contact']({}));
   }
 
+  displayFilteredContacts(contacts) {
+    let main = document.querySelector(".contacts");
+    main.textContent = '';
+    main.insertAdjacentHTML('beforeend', this.templates['contacts']({ contacts }));
+  }
+
   async displayMainPage(contactsObject) {
     let contacts = await contactsObject;
     let main = document.querySelector('#main-page');
@@ -97,6 +103,7 @@ class Controller {
     this.view = view;
     this.initialDisplay();
     this.currentContact = '';
+    this.letters = '';
   }
 
   initialDisplay = async () => {
@@ -117,16 +124,55 @@ class Controller {
     document.querySelectorAll('.delete-contact-button').forEach(button => {
       button.addEventListener('click', this.handleDeleteContact);
     });
+
+    document.querySelectorAll('input[type="search"]').forEach(bar => {
+      bar.addEventListener('keyup', this.handleSearchContact);
+    });
+  }
+
+  handleSearchContact = async event => {
+    event.preventDefault();
+
+    let contacts = await this.model.getAllContacts();
+    contacts = await contacts;
+
+    if (event.key === 'Backspace') {
+      this.letters = this.letters.slice(0, this.letters.length - 1);
+
+      let filteredContacts = contacts.filter(contact => {
+        return contact.full_name.toLowerCase().startsWith(this.letters) || 
+        contact.full_name.toLowerCase() === this.letters;
+      });
+
+      if (this.letters === '') {
+        this.initialDisplay();
+      } else {
+        this.view.displayFilteredContacts(filteredContacts);
+      }
+    } else {
+      this.letters += event.key; 
+
+      let filteredContacts = contacts.filter(contact => {
+        return contact.full_name.toLowerCase().startsWith(this.letters) || 
+        contact.full_name.toLowerCase() === this.letters;
+      });
+
+      if (this.letters === '') {
+        this.initialDisplay();
+      } else {
+        this.view.displayFilteredContacts(filteredContacts);
+      }
+    }
   }
 
   handleAddContact = () => {
     this.view.displayAddContact();
 
-    document.querySelector('#add-contact-form').addEventListener('submit', this.handleSubmitContact);
+    document.querySelector('#add-contact-form').addEventListener('submit', this.handleSubmitAddContact);
     document.querySelector('.cancel-button').addEventListener('click', this.initialDisplay);
   }
 
-  handleSubmitContact = async (event) => {
+  handleSubmitAddContact = async event => {
     event.preventDefault();
 
     const form = document.querySelector('#add-contact-form');
@@ -138,7 +184,7 @@ class Controller {
     this.initialDisplay();
   }
 
-  handleEditContact = async (event) => {
+  handleEditContact = async event => {
     this.currentContact = event.target; 
     this.view.displayEditContact();
 
@@ -155,7 +201,7 @@ class Controller {
     document.querySelector('.cancel-button').addEventListener('click', this.initialDisplay);
   }
 
-  handleSubmitEditContact = async (event) => {
+  handleSubmitEditContact = async event => {
     event.preventDefault();
     let id = this.currentContact.getAttribute('data_id');
     let singleContact = await this.model.getSingleContact(id);
@@ -169,7 +215,7 @@ class Controller {
     this.initialDisplay();
   }
 
-  handleDeleteContact = async (event) => {
+  handleDeleteContact = async event => {
     let id = event.target.closest('div').parentElement.getAttribute('data_id');
     let value = confirm("Are you sure you want to delete this contact?");
 
@@ -180,7 +226,7 @@ class Controller {
     this.initialDisplay();
   }
 
-  renderDisplay = async (contacts) => {
+  renderDisplay = async contacts => {
     this.view.displayMainPage(contacts);
   }
 }
