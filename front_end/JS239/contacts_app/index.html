@@ -1,0 +1,132 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Felicia's Contacts Manager</title>
+    <meta name="description" content="Contact Manager using Backbone.js, Localstorage, RequireJS, Handlebar and Bootstrap">
+    <script src="javascripts/contacts.js"></script>
+    <link rel="stylesheet" href="stylesheets/main.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.js"></script>
+  </head>
+  <body>
+    <header>
+      <a href="#home"><h1>Contacts</h1></a>
+      <h3></h3>
+    </header>
+    <div id="main-page"></div>
+    <footer>
+      <p>Developed by <span>Felicia Bacon</span> @ Launch School.</p>
+    </footer>
+  </body>
+</html>
+
+<script id="main-page" type="text/x-handlebars">
+  <div class="main-page">
+    <button class="add-contact-button">Add Contact</button>
+    <input type="text" name="search" placeholder="Search by Contact Name"></input>
+  </div>
+
+  {{#if contacts}}
+    {{> contacts }}
+  {{else}}
+    {{> no-contacts }}
+  {{/if}}
+</script>
+
+<script id="contacts" data-type="partial" type="text/x-handlebars">
+  <div class="contacts">
+    {{#each contacts}}
+    {{> single-contact}}
+    {{/each}}
+  </div>
+</script>
+
+<script id="single-contact" data-type="partial" type="text/x-handlebars">
+  <div class="contact" data_id={{id}}>
+    <h3>{{full_name}}</h3>
+    <hr>
+    <dl>
+      <dt>Phone Number: </dt>
+      <dd>{{phone_number}}</dd>
+      <dt>Email: </dt>
+      <dd>{{email}}</dd>
+      <dt>Tags: </dt>
+      <dd>{{tags}}</dd>
+    </dl>
+
+    <div id="buttons">
+      <button class="edit-contact-button" data_id={{id}} type="button">Edit</button>
+      <button class="delete-contact-button" type="button">Delete</button>
+    </div>
+  </div>
+</script>
+
+<script id="no-contacts" data-type="partial" type="text/x-handlebars">
+  <div class="no-contacts">
+    <h2>There are no contacts.</h2>
+    <button class="add-contact-button">Add Contact</button>
+  <div>
+</script>
+
+<script id="add-contact" type="text/x-handlebars">
+  <div class="add-contact">
+    <h2>Create Contact</h2>
+
+    <form id="add-contact-form">
+      <div class="name">
+        <label for="full_name">Name: </label>
+        <input type="text" name="full_name" id="full_name" required>
+      </div>
+
+      <div class="email">
+        <label for="email">Email: </label>
+        <input type="email" name="email" id="email" required>
+      </div>
+
+      <div class="phone_number">
+        <label for="phone_number">Phone Number: </label>
+        <input type="text" name="phone_number" id="phone_number" placeholder="xxx-xxx-xxxx" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}">
+      </div>
+
+      <div class="tags">
+        <label for="tags">Tags: </label>
+        <input type="text" name="tags" id="tags" value="none">
+      </div>
+      
+      <button class="submit" type="submit">Submit</button>
+      <button class="cancel-button" type="button">Cancel</button>
+    </form>
+  </div>
+</script>
+
+<script id="edit-contact" type="text/x-handlebars">
+  <div class="edit-contact" data_id={{id}}>
+    <h2>Edit Contact</h2>
+
+    <form id="edit-contact-form">
+      <div class="name">
+        <label for="full_name">Name: </label>
+        <input type="text" name="full_name" id="full_name">
+      </div>
+
+      <div class="email">
+        <label for="email">Email: </label>
+        <input type="email" name="email" id="email">
+      </div>
+
+      <div class="phone_number">
+        <label for="phone_number">Phone Number: </label>
+        <input type="text" name="phone_number" id="phone_number">
+      </div>
+
+      <div class="tags">
+        <label for="tags">Tags: </label>
+        <input type="text" name="tags" id="tags" value="none">
+      </div>
+
+      <button class="submit-button" type="submit">Submit</button>
+      <button class="cancel-button" type="button">Cancel</button>
+    </form>
+  </div>
+</script>
+

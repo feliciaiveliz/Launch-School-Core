@@ -138,10 +138,19 @@ class Controller {
     this.initialDisplay();
   }
 
-  handleEditContact = (event) => {
-    this.currentContact = event.target;  // fix to edit contact button for contact we click
+  handleEditContact = async (event) => {
+    this.currentContact = event.target; 
     this.view.displayEditContact();
 
+    let id = this.currentContact.getAttribute('data_id');
+    let singleContact = await this.model.getSingleContact(id);
+
+    let form = document.querySelector('#edit-contact-form');
+    form.querySelector("#full_name").value = singleContact.full_name;
+    form.querySelector("#email").value = singleContact.email;
+    form.querySelector("#phone_number").value = singleContact.phone_number;
+    form.querySelector("#tags").value = singleContact.tags;
+    
     document.querySelector('#edit-contact-form').addEventListener('submit', this.handleSubmitEditContact);
     document.querySelector('.cancel-button').addEventListener('click', this.initialDisplay);
   }
@@ -150,6 +159,7 @@ class Controller {
     event.preventDefault();
     let id = this.currentContact.getAttribute('data_id');
     let singleContact = await this.model.getSingleContact(id);
+
     let form = document.querySelector('#edit-contact-form');
     let formData = new FormData(form);
     let contact = Object.fromEntries(formData);
@@ -160,7 +170,7 @@ class Controller {
   }
 
   handleDeleteContact = async (event) => {
-    let id = event.target.closest('div').getAttribute('data_id');
+    let id = event.target.closest('div').parentElement.getAttribute('data_id');
     let value = confirm("Are you sure you want to delete this contact?");
 
     if (value) {
@@ -180,5 +190,3 @@ let app;
 document.addEventListener('DOMContentLoaded', () => {
   app = new Controller(new Model(), new View());
 });
-
-
