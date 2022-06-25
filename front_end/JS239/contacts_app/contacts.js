@@ -225,10 +225,6 @@ class Controller {
 
     this.initialDisplay();
   }
-
-  renderDisplay = async contacts => {
-    this.view.displayMainPage(contacts);
-  }
 }
 
 let app;
