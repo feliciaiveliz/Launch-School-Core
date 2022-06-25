@@ -1,54 +1,40 @@
 class Model {
-  constructor() {}
+  constructor() {
+    this.url = 'http://localhost:3000/api/contacts/';
+    this.contentType = 'application/json; charset=utf-8';
+  }
 
   async getAllContacts() {
-    let response = await fetch('http://localhost:3000/api/contacts');
-    let contacts = await response.json();
-    return contacts;
+    return await fetch(this.url).then(result => result.json());
   }
 
   async getSingleContact(id) {
-    let response = await fetch(`http://localhost:3000/api/contacts/${id}`);
-    let js = await response.json();
-    return js;
+    return await fetch(this.url + `${id}`).then(result => result.json());
   }
 
   async addContact(jsonContact) {
-    let response = await fetch('http://localhost:3000/api/contacts/', {
+    let response = await fetch(this.url, {
       method: "POST",
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-      },
+      headers: { 'Content-Type': this.contentType },
       body: jsonContact,
     });
 
-    if (!response.ok) {
-      console.log(await response.text());
-    }
+    if (!response.ok) alert(await response.text());
   }
 
   async updateContact(id, contact) {
-    let response = await fetch(`http://localhost:3000/api/contacts/${id}`, {
+    let response = await fetch(this.url + `${id}`, {
       method: "PUT",
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-      },
+      headers: { 'Content-Type': this.contentType },
       body: contact,
     });
 
-    if (!response.ok) {
-      console.log(await response.text());
-    }
+    if (!response.ok) alert(await response.text());
   }
 
   async deleteContact(id) {
-    let response = await fetch(`http://localhost:3000/api/contacts/${id}`, {
-      method: "DELETE",
-    });
-
-    if (!response.ok) {
-      return await response.status;
-    }
+    let response = await fetch(this.url + `${id}`, { method: "DELETE" });
+    if (!response.ok) alert(await response.status);
   }
 }
 
@@ -89,7 +75,7 @@ class View {
     main.insertAdjacentHTML('beforeend', this.templates['contacts']({ contacts }));
   }
 
-  async displayMainPage(contactsObject) {
+  async displayAllContacts(contactsObject) {
     let contacts = await contactsObject;
     let main = document.querySelector('#main-page');
     main.innerHTML = '';
@@ -101,14 +87,14 @@ class Controller {
   constructor(model, view) {
     this.model = model;
     this.view = view;
-    this.initialDisplay();
-    this.currentContact = '';
+    this.mainDisplay();
     this.letters = '';
+    this.currentContactId = '';
   }
 
-  initialDisplay = async () => {
+  mainDisplay = async () => {
     let contacts = await this.model.getAllContacts();
-    await this.view.displayMainPage(contacts);
+    await this.view.displayAllContacts(contacts);
     this.bindEvents();
   }
 
@@ -130,6 +116,13 @@ class Controller {
     });
   }
 
+  filterContacts(contacts) {
+    return contacts.filter(contact => {
+      return contact.full_name.toLowerCase().startsWith(this.letters) || 
+      contact.full_name.toLowerCase() === this.letters;
+    });
+  }
+
   handleSearchContact = async event => {
     event.preventDefault();
 
@@ -138,27 +131,19 @@ class Controller {
 
     if (event.key === 'Backspace') {
       this.letters = this.letters.slice(0, this.letters.length - 1);
-
-      let filteredContacts = contacts.filter(contact => {
-        return contact.full_name.toLowerCase().startsWith(this.letters) || 
-        contact.full_name.toLowerCase() === this.letters;
-      });
+      let filteredContacts = this.filterContacts(contacts);
 
       if (this.letters === '') {
-        this.initialDisplay();
+        this.mainDisplay();
       } else {
         this.view.displayFilteredContacts(filteredContacts);
       }
     } else {
       this.letters += event.key; 
-
-      let filteredContacts = contacts.filter(contact => {
-        return contact.full_name.toLowerCase().startsWith(this.letters) || 
-        contact.full_name.toLowerCase() === this.letters;
-      });
+      let filteredContacts = this.filterContacts(contacts);
 
       if (this.letters === '') {
-        this.initialDisplay();
+        this.mainDisplay();
       } else {
         this.view.displayFilteredContacts(filteredContacts);
       }
@@ -169,7 +154,7 @@ class Controller {
     this.view.displayAddContact();
 
     document.querySelector('#add-contact-form').addEventListener('submit', this.handleSubmitAddContact);
-    document.querySelector('.cancel-button').addEventListener('click', this.initialDisplay);
+    document.querySelector('.cancel-button').addEventListener('click', this.mainDisplay);
   }
 
   handleSubmitAddContact = async event => {
@@ -181,54 +166,48 @@ class Controller {
     const json = JSON.stringify(contacts);
 
     await this.model.addContact(json);
-    this.initialDisplay();
+    this.mainDisplay();
   }
 
   handleEditContact = async event => {
-    this.currentContact = event.target; 
+    this.currentContactId = event.target.getAttribute('data_id'); 
     this.view.displayEditContact();
 
-    let id = this.currentContact.getAttribute('data_id');
-    let singleContact = await this.model.getSingleContact(id);
+    let contact = await this.model.getSingleContact(this.currentContactId);
 
     let form = document.querySelector('#edit-contact-form');
-    form.querySelector("#full_name").value = singleContact.full_name;
-    form.querySelector("#email").value = singleContact.email;
-    form.querySelector("#phone_number").value = singleContact.phone_number;
-    form.querySelector("#tags").value = singleContact.tags;
+    form.querySelector("#full_name").value    = contact.full_name;
+    form.querySelector("#email").value        = contact.email;
+    form.querySelector("#phone_number").value = contact.phone_number;
+    form.querySelector("#tags").value         = contact.tags;
     
     document.querySelector('#edit-contact-form').addEventListener('submit', this.handleSubmitEditContact);
-    document.querySelector('.cancel-button').addEventListener('click', this.initialDisplay);
+    document.querySelector('.cancel-button').addEventListener('click', this.mainDisplay);
   }
 
   handleSubmitEditContact = async event => {
     event.preventDefault();
-    let id = this.currentContact.getAttribute('data_id');
-    let singleContact = await this.model.getSingleContact(id);
+
+    let id = this.currentContactId;
 
     let form = document.querySelector('#edit-contact-form');
     let formData = new FormData(form);
     let contact = Object.fromEntries(formData);
     let json = JSON.stringify(contact);
 
-    await this.model.updateContact(singleContact.id, json);
-    this.initialDisplay();
+    await this.model.updateContact(id, json);
+    this.mainDisplay();
   }
 
   handleDeleteContact = async event => {
     let id = event.target.closest('div').parentElement.getAttribute('data_id');
     let value = confirm("Are you sure you want to delete this contact?");
 
-    if (value) {
-      await this.model.deleteContact(id);
-    }
-
-    this.initialDisplay();
+    if (value) await this.model.deleteContact(id);
+    this.mainDisplay();
   }
 }
 
 let app;
 
-document.addEventListener('DOMContentLoaded', () => {
-  app = new Controller(new Model(), new View());
-});
+document.addEventListener('DOMContentLoaded', () => app = new Controller(new Model(), new View()));
