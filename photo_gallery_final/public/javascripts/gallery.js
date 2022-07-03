@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
     slides.insertAdjacentHTML('beforeend', templates.photos({ photos }));
   }
 
-  function renderPhotoInformation(id) {  // adds photo info under previous photo info
+  function renderPhotoInformation(id) {  
     let photo = photos.filter(photo => photo.id === id)[0];
     let header = document.querySelector('section > header');
     
